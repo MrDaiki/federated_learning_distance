@@ -37,7 +37,7 @@ def experiment(start,end,dataset,step=10,mmd_step=50,subdataset_size=5000):
 
     print("Step : result normalisation")
 
-    norm_y = delta_y/sum(delta_y)
-    norm_x = np.array(delta_x)**2
+    norm_y = delta_y
+    norm_x = delta_x
 
     return (norm_x,norm_y)

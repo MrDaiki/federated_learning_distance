@@ -41,8 +41,11 @@ def execute_experiment(filepath,filename,dataset=mnist):
     
     results = []
 
+    i = 1
     for expe in experiments:
-        
+
+        print("=================== Experiment "+str(i)+" ====================")
+        print(" ")
         formated_experiment_start = {int(label):data for label,data in expe['start'].items()}
         formated_experiment_end = {int(label):data for label,data in expe['end'].items()}
 
@@ -50,27 +53,14 @@ def execute_experiment(filepath,filename,dataset=mnist):
 
         fx,fy = list(x),list(y)
 
+        print("Step 4 : Saving results")
         results.append({'distance_mmd':fy,'distance_repartition':fx})
+        print(" ")
 
     with open(filepath+filename+"_result.json",'w') as file:
 
         json.dump(results,file)
 
-
-def prompt_experiments(filepath):
-
-    with open(filepath,"r") as file:
-
-        values = json.load(file)
-
-    for value in values:
-
-        x = np.array(value['distance_repartition'])
-        y = np.array(value['distance_mmd'])
-
-        ax = plt.axes(xmin= np.min(x),xmax=np.max(x),ymin=np.min(y),ymax=np.max(y))
-        
-        plt.plot(x,y,'x',axes=ax,xlabel='class repartition distance',ylabel='maximum mean discrepancy')
 
 if __name__ == '__main__':
 
@@ -89,7 +79,7 @@ if __name__ == '__main__':
     filename = 'experiment_1'
     
 
-    generate_random_experiment(filepath,filename,dataset=mnist,number=100)
+    generate_random_experiment(filepath,filename,dataset=mnist,number=1)
 
     execute_experiment(filepath,filename,dataset=mnist)
     

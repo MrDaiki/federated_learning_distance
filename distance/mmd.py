@@ -41,6 +41,6 @@ def distance_mmd(distrib_a,distrib_b,alpha=1,sample_size=100):
                 mmd_a += gaussian_kernel(a_sample[i],a_sample[j],alpha)
                 mmd_b += gaussian_kernel(b_sample[i],b_sample[j],alpha)
 
-    return mmd_a**2 + mmd_b**2 - 2*mmd_ab
+    return (mmd_a + mmd_b)/(sample_size*(sample_size-1)) - 2*mmd_ab/sample_size**2
 
 
