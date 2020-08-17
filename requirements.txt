@@ -1,0 +1,10 @@
+wheel
+numpy
+matplotlib
+scipy
+scikit-learn
+pandas
+torch
+torchvision
+tk
+
