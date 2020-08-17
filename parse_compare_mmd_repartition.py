@@ -34,7 +34,7 @@ def generate_random_experiment(filepath,filename,dataset=mnist,number=100):
 
 def execute_experiment(filepath,filename,dataset=mnist):
 
-    with open(filepath,"r") as file:
+    with open(filepath+filename+".json","r") as file:
 
         experiments = json.load(file)
     
