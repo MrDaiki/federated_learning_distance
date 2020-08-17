@@ -8,9 +8,11 @@ from torchvision import datasets,transforms
 from dataset_generator.dataset_generator import generate_random_repartition
 from distance.mmd_repartiton_compare import experiment
 
+import matplotlib.pyplot as plt
+
 mnist = datasets.MNIST('./data',download=True)
 
-def generate_random_experiment(filepath,dataset=mnist,number=100):
+def generate_random_experiment(filepath,filename,dataset=mnist,number=100):
 
     label_list = list(set(dataset.targets.data.numpy()))
 
@@ -25,12 +27,12 @@ def generate_random_experiment(filepath,dataset=mnist,number=100):
         experiment_list.append(experiment)
 
 
-    with open(filepath,'w') as file:
+    with open(filepath+filename+'.json','w') as file:
 
         json.dump(experiment_list,file)
 
 
-def execute_experiment(filepath,dataset=mnist):
+def execute_experiment(filepath,filename,dataset=mnist):
 
     with open(filepath,"r") as file:
 
@@ -50,7 +52,7 @@ def execute_experiment(filepath,dataset=mnist):
 
         results.append({'distance_mmd':fy,'distance_repartition':fx})
 
-    with open(filepath+"_result.json",'w') as file:
+    with open(filepath+filename+"_result.json",'w') as file:
 
         json.dump(results,file)
 
@@ -67,32 +69,27 @@ def prompt_experiments(filepath):
         y = np.array(value['distance_mmd'])
 
         ax = plt.axes(xmin= np.min(x),xmax=np.max(x),ymin=np.min(y),ymax=np.max(y))
+        
+        plt.plot(x,y,'x',axes=ax,xlabel='class repartition distance',ylabel='maximum mean discrepancy')
+
+if __name__ == '__main__':
 
 
-d1 = {
-    0: 0.1,
-    1: 0.1,
-    2: 0.1,
-    3: 0.1,
-    4: 0.1,
-    5: 0.1,
-    6: 0.1,
-    7: 0.1,
-    8: 0.1,
-    9: 0.1,
-}
+    #setup of experiments files
+    filepath = './experiments/mmd_repartition_compare/'
 
-d2 = {
-    0: 0.91,
-    1: 0.01,
-    2: 0.01,
-    3: 0.01,
-    4: 0.01,
-    5: 0.01,
-    6: 0.01,
-    7: 0.01,
-    8: 0.01,
-    9: 0.01,
-}
+    if not os.path.isdir('./experiments'):
 
-print(experiment(d1,d2,mnist))
+        os.mkdir('./experiments')
+
+    if not os.path.isdir('./experiments/mmd_repartition_compare'):
+
+        os.mkdir('./experiments/mmd_repartition_compare')
+
+    filename = 'experiment_1'
+    
+
+    generate_random_experiment(filepath,filename,dataset=mnist,number=100)
+
+    execute_experiment(filepath,filename,dataset=mnist)
+    
