@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("-f","--filename",type=str,help="Name of the file where experiments will be saved (file extension is not needed)",default="experiment")
+    parser.add_argument("-f","--filename",type=str,help="Name of the file where experiments will be saved (file extension is not needed)",default="experiment_1")
     parser.add_argument("-n","--number",type=int,help="Number of random experiments that will be performed",default=50)
 
     args = parser.parse_args()
