@@ -1,5 +1,6 @@
 import json
 import os
+import argparse
 
 import numpy as np
 
@@ -44,8 +45,11 @@ def execute_experiment(filepath,filename,dataset=mnist):
     i = 1
     for expe in experiments:
 
-        print("=================== Experiment "+str(i)+" ====================")
+        print("=================== Experiment "+str(i)+" ===================")
         print(" ")
+
+        i+= 1
+
         formated_experiment_start = {int(label):data for label,data in expe['start'].items()}
         formated_experiment_end = {int(label):data for label,data in expe['end'].items()}
 
@@ -53,17 +57,24 @@ def execute_experiment(filepath,filename,dataset=mnist):
 
         fx,fy = list(x),list(y)
 
-        print("Step 4 : Saving results")
         results.append({'distance_mmd':fy,'distance_repartition':fx})
+        print("Step 4 : serializing result")
         print(" ")
 
     with open(filepath+filename+"_result.json",'w') as file:
-
+        
+        print("Saving results at "+filepath+filename+"_result.json")
         json.dump(results,file)
 
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser()
+    
+    parser.add_argument("-f","--filename",type=str,help="Name of the file where experiments will be saved (file extension is not needed)",default="experiment")
+    parser.add_argument("-n","--number",type=int,help="Number of random experiments that will be performed",default=50)
+
+    args = parser.parse_args()
 
     #setup of experiments files
     filepath = './experiments/mmd_repartition_compare/'
@@ -76,10 +87,9 @@ if __name__ == '__main__':
 
         os.mkdir('./experiments/mmd_repartition_compare')
 
-    filename = 'experiment_1'
+    filename = args.filename
     
 
-    generate_random_experiment(filepath,filename,dataset=mnist,number=1)
-
+    generate_random_experiment(filepath,filename,dataset=mnist,number=args.number)
     execute_experiment(filepath,filename,dataset=mnist)
     
