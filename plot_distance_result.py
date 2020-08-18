@@ -44,9 +44,9 @@ def prompt_experiments(filepath,x_transform=None,y_transform=None):
             y = y_transform(y)
 
 
-        ax = plt.axes(xlim=(np.min(x),np.max(x)),ylim=(np.min(y),np.max(y)),xlabel='class repartition distance',ylabel='maximum mean discrepancy')
+        ax = plt.axes(xlim=(0,1),ylim=(0,1),xlabel='class repartition distance',ylabel='maximum mean discrepancy')
         
-        plt.plot(x,y,axes=ax)
+        plt.plot(x/np.max(x),y/np.max(y),axes=ax)
 
         plt.show()
 
@@ -56,14 +56,17 @@ if __name__ == '__main__' :
 
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("-f","--filename",type=str,help="Name of the file where experiments will be saved (file extension is not needed)",default="experiment")
-    parser.add_argument("-xt","--xtransform",type=str,choices=["None","Sqare","Root","Exp","Log"],help="Perform transform over repartition distance before prompt",default="None")
-    parser.add_argument("-yt","--xtransform",type=str,choices=["None","Sqare","Root","Exp","Log"],help="Perform transform over mmd distance before prompt",default="None")
+    parser.add_argument("-f","--filename",type=str,help="Name of the file where experiments will be saved (file extension is not needed)",default="experiment_1")
+    parser.add_argument("-xt","--xtransform",type=str,choices=["None","Square","Root","Exp","Log"],help="Perform transform over repartition distance before prompt",default="None")
+    parser.add_argument("-yt","--ytransform",type=str,choices=["None","Square","Root","Exp","Log"],help="Perform transform over mmd distance before prompt",default="None")
 
 
     args = parser.parse_args()
 
     x_transform = None
+
+    print(args.xtransform)
+
     if args.xtransform == "Square":
         x_transform = square_transform
     elif args.xtransform == "Log":
@@ -86,4 +89,4 @@ if __name__ == '__main__' :
     filepath = './experiments/mmd_repartition_compare/'
     filename = args.filename + "_result.json"
 
-    prompt_experiments(filepath+filename)
+    prompt_experiments(filepath+filename,x_transform=x_transform,y_transform=y_transform)
