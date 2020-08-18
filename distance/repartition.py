@@ -1,6 +1,12 @@
 import numpy as np
 from math import sqrt
 
+def distance_repartition(label_set_a,label_set_b,label_list):
+
+    for label in label_list:
+
+        idx = np.where()
+
 
 def distance_repartition_list(a,b):
 

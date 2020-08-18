@@ -1,10 +1,10 @@
 import json
+import numpy as np
 import argparse
 
-import numpy as np
+from scipy import stats
 
 import matplotlib.pyplot as plt
-
 
 def exp_transform(data):
 
@@ -23,43 +23,50 @@ def root_transform(data):
     return np.sqrt(data)
 
 
-def prompt_experiments(filepath,x_transform=None,y_transform=None):
+def plot_all_points(filepath,x_transform=None,y_transform=None):
 
     with open(filepath,"r") as file:
 
-        values = json.load(file)
+         values = json.load(file)
+
+    x_tot = []
+    y_tot = []
+
+    for element in values:
+
+        x_list = element['distance_repartition']
+        y_list = element['distance_mmd']
 
 
-    for value in values:
+        for x,y in zip(x_list,y_list):
 
-        x = np.array(value['distance_repartition'])
-        y = np.array(value['distance_mmd'])
+            plt.plot(x**2,y,'x')
+            x_tot.append(x**2)
+            y_tot.append(y)
 
-        if x_transform is not None:
-            
-            x = x_transform(x)
+    x_np = np.array(x_tot)
+    y_np = np.array(y_tot)
 
-        if y_transform is not None:
-            
-            y = y_transform(y)
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x_np,y_np)
+    print(p_value)
 
+    x1,y1 = 0, intercept
+    x2,y2 = 0.5,(0.5*slope+intercept)
 
-        ax = plt.axes(xlim=(0,1),ylim=(0,1),xlabel='class repartition distance',ylabel='maximum mean discrepancy')
-        
-        plt.plot(x/np.max(x),y/np.max(y),axes=ax)
+    plt.plot([x1,x2],[y1,y2])
 
-        plt.show()
-
+    plt.show()
 
 
-if __name__ == '__main__' : 
+if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     
     parser.add_argument("-f","--filename",type=str,help="Name of the file where experiments will be saved (file extension is not needed)",default="experiment_1")
-    parser.add_argument("-xt","--xtransform",type=str,choices=["None","Square","Root","Exp","Log"],help="Perform transform over repartition distance before prompt",default="None")
-    parser.add_argument("-yt","--ytransform",type=str,choices=["None","Square","Root","Exp","Log"],help="Perform transform over mmd distance before prompt",default="None")
+    parser.add_argument("-xt","--xtransform",type=str,choices=["None","Square","Root","Exp","Log"],help="Perform transform over repartition distance before regression",default="None")
+    parser.add_argument("-yt","--ytransform",type=str,choices=["None","Square","Root","Exp","Log"],help="Perform transform over mmd distance before regression",default="None")
 
+    filepath = "./experiments/mmd_repartition_compare/"
 
     args = parser.parse_args()
 
@@ -86,4 +93,5 @@ if __name__ == '__main__' :
     filepath = './experiments/mmd_repartition_compare/'
     filename = args.filename + "_result.json"
 
-    prompt_experiments(filepath+filename,x_transform=x_transform,y_transform=y_transform)
+    plot_all_points(filepath+filename,x_transform,y_transform)
+

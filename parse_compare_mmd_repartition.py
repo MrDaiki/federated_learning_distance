@@ -3,6 +3,7 @@ import os
 import argparse
 
 import numpy as np
+import multiprocessing as mp
 
 from torchvision import datasets,transforms
 
@@ -33,33 +34,38 @@ def generate_random_experiment(filepath,filename,dataset=mnist,number=100):
         json.dump(experiment_list,file)
 
 
+def execute_single_experiment(expe,dataset=mnist,step=20,mmd_step=200):
+
+    formated_experiment_start = {int(label):data for label,data in expe['start'].items()}
+    formated_experiment_end = {int(label):data for label,data in expe['end'].items()}
+
+    x,y = experiment(formated_experiment_start,formated_experiment_end,dataset,step=step,mmd_step=mmd_step)
+    return {'distance_mmd':list(y),'distance_repartition':list(x)}
+
+
 def execute_experiment(filepath,filename,dataset=mnist):
 
     with open(filepath+filename+".json","r") as file:
 
         experiments = json.load(file)
     
+
+    pool = mp.Pool(mp.cpu_count())
     
-    results = []
+    results = pool.map(execute_single_experiment,experiments)
 
-    i = 1
-    for expe in experiments:
+    # for expe in experiments:
 
-        print("=================== Experiment "+str(i)+" ===================")
-        print(" ")
+    #     formated_experiment_start = {int(label):data for label,data in expe['start'].items()}
+    #     formated_experiment_end = {int(label):data for label,data in expe['end'].items()}
 
-        i+= 1
+    #     x,y = experiment(formated_experiment_start,formated_experiment_end,dataset)
 
-        formated_experiment_start = {int(label):data for label,data in expe['start'].items()}
-        formated_experiment_end = {int(label):data for label,data in expe['end'].items()}
+    #     fx,fy = list(x),list(y)
 
-        x,y = experiment(formated_experiment_start,formated_experiment_end,dataset)
-
-        fx,fy = list(x),list(y)
-
-        results.append({'distance_mmd':fy,'distance_repartition':fx})
-        print("Step 4 : serializing result")
-        print(" ")
+    #     results.append({'distance_mmd':fy,'distance_repartition':fx})
+    #     print("Step 4 : serializing result")
+    #     print(" ")
 
     with open(filepath+filename+"_result.json",'w') as file:
         

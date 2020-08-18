@@ -31,7 +31,7 @@ def experiment(start,end,dataset,step=10,mmd_step=50,subdataset_size=5000):
         if (j==mmd_step//10):
 
             j=0
-            print("   MMD computing : "+str((i/mmd_step)*100)+"%")
+            print("    MMD computing : "+str((i/mmd_step)*100)+"%")
 
     norm_y = delta_y
     norm_x = delta_x

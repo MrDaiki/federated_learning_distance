@@ -31,4 +31,4 @@ Warning: this experiment is very costfull in memory and cpu usage.
 
 ## Visualisation
 
-You can run visualiez experiments by executing plot_distance_result.py, help is provided with -h option.
+You can run visualisation experiments by executing plot_distance_result.py, help is provided with -h option.
