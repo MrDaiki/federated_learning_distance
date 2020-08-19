@@ -122,24 +122,6 @@ def execute_experiments(filename,dataset=mnist):
     test_list = experiments['test_list']
     train_list = experiments['train_list']
 
-    test_dictionnary = {}
-
-    # Test dataset generation
-    # TODO : parralelize building
-    for size in size_list:
-
-        test_dictionnary[size] = []
-
-        for repartition in test_list:
-            
-            data,label = generate_random_subdataset_repetition(mnist.data,mnist.targets,repartition,size)
-            test_dataset = datasets.MNIST("./data")
-
-            test_dataset.data = data
-            test_dataset.targets= label
-
-            test_dictionnary[size].append(test_dataset)
-
     # Model initialisation
     batch_size = 64
     test_batch_size = 1000
@@ -156,7 +138,31 @@ def execute_experiments(filename,dataset=mnist):
     device = torch.device("cuda" if use_cuda else "cpu")
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
 
+    test_dictionnary = {}
+
+    print("Step 1 : Dataset generation")
+    # Test dataset generation
+    # TODO : parralelize building
+    for size in size_list:
+        
+        print("    Dataset size : "+str(size)+ "(started)")
+        test_dictionnary[size] = []
+
+        for repartition in test_list:
+            
+            data,label = generate_random_subdataset_repetition(mnist.data,mnist.targets,repartition,size)
+            test_dataset = datasets.MNIST("./data")
+
+            test_dataset.data = data
+            test_dataset.targets= label
+
+            test_dictionnary[size].append(test_dataset)
+
+        print("    Dataset size : "+str(size)+ "(end)")
+
     analitics = []
+
+    print("Step 2 : model training and testing")
 
     for train_repartition in train_list:
             
