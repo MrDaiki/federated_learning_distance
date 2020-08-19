@@ -102,7 +102,7 @@ def generate_experiments(filename,train_node_number=100,test_node_number=50,data
     filepath = "./experiments/performance_distance/"
     filepath = filepath+filename+".json"
 
-    size_list = [dataset_size_min + k * (dataset_size_max-dataset_size_min) for k in range(dataset_size_step+1)]
+    size_list = [dataset_size_min + k * (dataset_size_max-dataset_size_min)//dataset_size_step for k in range(dataset_size_step+1)]
 
     train_list = [ generate_random_repartition(label_list) for _ in range(train_node_number) ]
     test_list = [ generate_random_repartition(label_list) for _ in range(test_node_number) ]
@@ -227,7 +227,7 @@ def execute_experiments(filename,dataset=mnist):
             for dataset,repartition in zip(test_dictionnary[size],test_list):
                 
                 test_loader = torch.utils.data.DataLoader(
-                    test_dataset,
+                    dataset,
                     batch_size=test_batch_size, 
                     shuffle=True, 
                     **kwargs
