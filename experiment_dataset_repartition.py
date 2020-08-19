@@ -57,8 +57,11 @@ class Net(nn.Module):
 
 
 def train(model, device, train_loader, optimizer, epoch,log_interval):
+    
     model.train()
+
     for batch_idx, (data, target) in enumerate(train_loader):
+    
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
@@ -92,14 +95,14 @@ def test(model, device, test_loader):
     return 100. * correct / len(test_loader.dataset)
 
 
-def generate_experiments(filename,train_node_number=100,test_node_number=100,dataset_size_min=1000,dataset_size_max=10000,dataset_size_step=10):
+def generate_experiments(filename,train_node_number=100,test_node_number=50,dataset_size_min=1000,dataset_size_max=10000,dataset_size_step=10):
 
     label_list = list(set(mnist.targets.data.numpy()))
 
     filepath = "./experiments/performance_distance/"
     filepath = filepath+filename+".json"
 
-    size_list = [dataset_size_min + k * (dataset_size_max-dataset_size_min)//dataset_size_step for k in range(dataset_size_step+1)]
+    size_list = [dataset_size_min + k * (dataset_size_max-dataset_size_min) for k in range(dataset_size_step+1)]
 
     train_list = [ generate_random_repartition(label_list) for _ in range(train_node_number) ]
     test_list = [ generate_random_repartition(label_list) for _ in range(test_node_number) ]
@@ -151,7 +154,7 @@ def execute_experiments(filename,dataset=mnist):
         for repartition in test_list:
             
             data,label = generate_random_subdataset_repetition(mnist.data,mnist.targets,repartition,size)
-            test_dataset = datasets.MNIST("./data")
+            test_dataset = datasets.MNIST("./data",transform=transform)
 
             test_dataset.data = data
             test_dataset.targets= label
@@ -174,16 +177,17 @@ def execute_experiments(filename,dataset=mnist):
             size_analitic = {}
 
             data,label = generate_random_subdataset_repetition(mnist.data,mnist.targets,train_repartition,size)
-            train_dataset = datasets.MNIST("./data",train=True)
+            train_dataset = datasets.MNIST("./data",transform=transform,train=True)
 
+            
             train_dataset.data = data
             train_dataset.targets= label
 
-            data,label = generate_random_subdataset_repetition(mnist.data,mnist.targets,train_repartition,size)
-            test_dataset = datasets.MNIST("./data")
+            data_test,label_test = generate_random_subdataset_repetition(mnist.data,mnist.targets,train_repartition,size)
+            test_dataset = datasets.MNIST("./data",transform=transform)
 
-            test_dataset.data = data
-            test_dataset.targets= label
+            test_dataset.data = data_test
+            test_dataset.targets= label_test
 
 
             
@@ -193,6 +197,8 @@ def execute_experiments(filename,dataset=mnist):
                 shuffle=True, 
                 **kwargs
             )
+
+            print(train_loader)
 
             model = Net().to(device)
             optimizer = optim.Adadelta(model.parameters(), lr=lr)
