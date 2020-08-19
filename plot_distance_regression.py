@@ -39,21 +39,34 @@ def plot_all_points(filepath,x_transform=None,y_transform=None):
 
 
         for x,y in zip(x_list,y_list):
+            
+            if y >= 0 and x>=0.001:
+                
+                if x_transform is not None :
 
-            plt.plot(x**2,y,'x')
-            x_tot.append(x**2)
-            y_tot.append(y)
+                    x = x_transform(x)
+
+                if y_transform is not None :
+
+                    y = y_transform(y)
+
+                plt.plot(x,y,'x',color="blue")
+                x_tot.append(x)
+                y_tot.append(y)
+
 
     x_np = np.array(x_tot)
     y_np = np.array(y_tot)
 
     slope, intercept, r_value, p_value, std_err = stats.linregress(x_np,y_np)
-    print(p_value)
+
+    print("Correlation coeficient : "+str(r_value))
 
     x1,y1 = 0, intercept
     x2,y2 = 0.5,(0.5*slope+intercept)
 
-    plt.plot([x1,x2],[y1,y2])
+
+    plt.plot([x1,x2],[y1,y2],color="red")
 
     plt.show()
 

@@ -124,7 +124,7 @@ def generate_random_subdataset_repetition(data,labels,probability,dataset_size):
     # generation of empty list for sorted datasets by label
     for label,proba in probability.items():
 
-        data_sorted_list[label] = []
+        data_sorted_list[int(label)] = []
         num_max += proba
 
     for label,proba in probability.items():
@@ -132,12 +132,10 @@ def generate_random_subdataset_repetition(data,labels,probability,dataset_size):
         num_range_cumulative.append(num_range_cumulative[-1]+proba/num_max) 
 
 
-    
-
     for (value,label) in zip(data,labels):
 
         if (not type(label)==int):
-
+        
             data_sorted_list[int(label.numpy())].append(value.numpy())
 
         else :
