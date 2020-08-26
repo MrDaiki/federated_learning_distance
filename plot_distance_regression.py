@@ -32,6 +32,9 @@ def plot_all_points(filepath,x_transform=None,y_transform=None):
     x_tot = []
     y_tot = []
 
+    fig = plt.figure("Regression MMD = rd")
+    ax = plt.axes(xlabel='Repartition distance',ylabel='Maximum mean discrepancy')
+
     for element in values:
 
         x_list = element['distance_repartition']
@@ -50,7 +53,7 @@ def plot_all_points(filepath,x_transform=None,y_transform=None):
 
                     y = y_transform(y)
 
-                plt.plot(x,y,'x',color="blue")
+                plt.plot(x,y,'x',color="blue",axes=ax)
                 x_tot.append(x)
                 y_tot.append(y)
 
@@ -67,9 +70,9 @@ def plot_all_points(filepath,x_transform=None,y_transform=None):
 
 
     plt.plot([x1,x2],[y1,y2],color="red")
+    plt.savefig("plot_result.png")
 
     plt.show()
-
 
 if __name__ == "__main__":
 
