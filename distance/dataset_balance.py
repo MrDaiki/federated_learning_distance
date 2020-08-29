@@ -30,3 +30,16 @@ def dataset_balance(labels,label_list):
             entropy += - ((label_size)/dataset_size) * np.log((label_size)/dataset_size)
 
     return entropy/np.log(len(label_list))
+
+
+def dataset_balance_repartition(repartition):
+
+    entropy = 0
+    label_size = 0
+
+    for _,proportion in repartition.items():
+        
+        label_size +=1
+        entropy+= -proportion * np.log(proportion)
+
+    return entropy/np.log(label_size)
